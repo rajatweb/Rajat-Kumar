@@ -1,35 +1,307 @@
-<section class="ecom-banner-wrapper">
-    <div class="ecom-banner-header">
-        <span>ecom</span>
-        <span>tagline</span>
-        <a href="#">
-            Button
+<section class="ecom-banner">
+  <!-- Header Section -->
+  <div class="ecom-header">
+    <!-- mobile hamburger menu -->
+    <div class="mobile-menu-btn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="ecom-header-logo">
+      <span class="brand-text">ecom</span>
+    </div>
+    <div class="ecom-header-tagline desktop-only">
+      <span>tagline</span>
+    </div>
+    <div class="ecom-header-button desktop-only">
+      <a href="#" class="ecom-header-button-link">
+        Button
+        {% render 'icon-arrow-right'
+          , color: '#000' %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Content Section -->
+  <div class="mobile-only">
+    <div class="mobile-content">
+      <h1 class="main-title">The Gift Guide</h1>
+      <p class="main-subtitle">Discover Joy: Your Ultimate Holiday Gift Destination.</p>
+    </div>
+  </div>
+
+
+  <!-- Main Content -->
+  <div class="ecom-content" style="background-image: url('{{ 'banner-image.svg' | asset_url }}');">
+    <div class="content-text desktop-only">
+      <h1 class="main-title">The Gift Guide</h1>
+      <p class="main-subtitle">Discover Joy: Your Ultimate Holiday Gift Destination.</p>
+      <a href="#" class="ecom-content-button">
+        Button
+        {% render 'icon-arrow-right'
+          , color: '#fff' %}
+      </a>
+    </div>
+
+    <div class="mobile-banner-button mobile-only">
+        <a href="#" class="mobile-banner-button-link">
+            Shop Now
+            {% render 'icon-arrow-right'
+              , color: '#fff' %}
         </a>
     </div>
-    <div class="ecom-banner-content">
-        Content
-        <div class="ecom-banner-content-text">
-            <h2>Title</h2>
-            <p>Subtext</p>
-            <a href="#">
-                Button
-            </a>
-        </div>
-    </div>
-    <div class="ecom-banner-footer">
-        Footer Text
-    </div>
+  </div>
 </section>
+<style>
+
+  .ecom-banner {
+    font-family: 'Jost'
+    , sans-serif;
+    color: "#000";
+    width: 100%;
+    height: 100vh;
+  }
+
+  /* Header Section */
+  .ecom-header {
+    background-color: #F5F5F5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    gap: 4px;
+    padding: 10px;
+  }
+
+  .mobile-menu-btn span {
+    width: 20px;
+    height: 2px;
+    background: #000;
+    transition: all 0.3s ease;
+  }
+
+  .ecom-header-logo .brand-text {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #000;
+  }
+
+  .ecom-header-tagline {
+    flex: 1;
+    text-align: center;
+    margin: 0 20px;
+  }
+
+  .ecom-header-tagline span {
+    font-size: 16px;
+    font-weight: 400;
+    color: #000;
+  }
+
+  .ecom-header-button-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 42px;
+    background: linear-gradient(to right, #000 50%, #FFD700 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: all 0.3s ease-out;
+  }
+
+  .ecom-header-button-link svg {
+    width: 18px;
+    height: 18px;
+    transition: all 0.3s ease;
+    stroke: #000;
+  }
+
+  .ecom-header-button-link:hover {
+    background-position: left bottom;
+    color: #fff;
+  }
+
+  .ecom-header-button-link:hover svg {
+    transform: translateX(3px);
+    stroke: #fff;
+    fill: #fff;
+    transition: all 0.3s ease-out;
+  }
+
+
+  /** Mobile responsive and other css **/
+  .mobile-only {
+    display: none;
+    /* background-color: #fff; */
+    text-align: center;
+  }
+
+  /** main content **/
+  .ecom-content {
+    position: relative;
+    min-height: calc(100vh - 120px);
+    background-color: #fff;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 100px 80px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .content-text {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+  }
+
+  .ecom-content-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 42px;
+    background: linear-gradient(to right, #FFD700 50%, #000 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: all 0.3s ease-out;
+  }
+
+
+  .ecom-content-button:hover {
+    background-position: left bottom;
+    color: #000;
+  }
+
+  .ecom-content-button:hover svg {
+    transform: translateX(3px);
+    stroke: #000;
+    fill: #000;
+    transition: all 0.3s ease-out;
+  }
+
+  .main-title {
+    font-size: 64px;
+    font-weight: 700;
+    color: #000;
+    marging: 0 0 25px 0;
+    line-height: 1.2;
+  }
+
+
+  .main-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    color: #000;
+    margin: 0 0 35px;
+    line-height: 1.5;
+    max-width: 500px;
+  }
+
+  .mobile-banner-button-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 42px;
+    background: linear-gradient(to right, #FFD700 50%, #000 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: all 0.3s ease-out;
+  }
+
+  .mobile-banner-button {
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    width: 100%;
+    padding: 0 80px;
+    transform: translateX(-50%);
+  }
+
+
+  @media screen and (max-width: 768px) {
+    .ecom-header {
+      padding: 12px 20px;
+      justify-content: space-between;
+    }
+
+    .desktop-only {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: flex;
+      order: 1;
+    }
+
+    .ecom-header-logo {
+      order: 2;
+      flex: 1;
+      text-align: center;
+    }
+
+    .mobile-only {
+      display: block;
+    }
+
+    .main-title {
+        font-size: 30px;
+    }
+
+    .main-subtitle {
+        font-size: 16px;
+    }
+
+    .mobile-content {
+        padding: 0 20px;
+    }
+
+
+</style>
 
 {% schema %}
-{
+  {
     "name": "Ecom Banner",
     "settings": [
-        {
-            "type": "text",
-            "id": "title",
-            "label": "Title"
-        }
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Ecom Banner",
+        "category": "Ecom"
+      }
     ]
-}
+  }
 {% endschema %}
