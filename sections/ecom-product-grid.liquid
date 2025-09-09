@@ -302,6 +302,11 @@
         document.body.style.overflow = 'hidden';
     }
 
+    function closeProductModal() {
+        productModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
 
     function generateOptionSelectors(options, variants) {
         const optionsContainer = document.getElementById('productOptions');
@@ -412,15 +417,15 @@
 
        const sizeSelect = document.querySelector('.size-select');
        if (sizeSelect && sizeSelect.value) {
-        selectedOptions[0] = sizeSelect.value; // Size is option1
+        selectedOptions[0] = sizeSelect.value;
        }
 
        const colorButton = document.querySelector('.color-button.selected');
         if (colorButton) {
-            selectedOptions[1] = colorButton.dataset.optionValue; // Color is option2
+            selectedOptions[1] = colorButton.dataset.optionValue;
         }
 
-       // Find matching variant
+
         const matchingVariant = currentProduct.variants.find(variant => {
             return variant.options.every((option, index) => {
                 return selectedOptions[index] === option;
@@ -432,21 +437,36 @@
 
             document.getElementById('productId').value = selectedVariant.id;
 
-            // Format price (Shopify gives in cents)
             const formattedPrice = `$${(selectedVariant.price / 100).toFixed(2)}`;
 
             document.getElementById('productModalPrice').innerHTML = formattedPrice;
-        }
-       
+        }       
     }
 
-  
-    // hotspotMarkers.forEach(marker => {
-    //   marker.addEventListener('click', function() {
-    //     const handle = this.dataset.handle;
-    //     window.location.href = `/products/${handle}`;
-    //   });
-    // });
+    // Add to cart
+    productForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log("submit");
+
+        const formData = new FormData();
+        formData.append('id', selectedVariant.id);
+        formData.append('quantity', 1);
+
+        fetch('/cart/add.js', {
+            method: 'POST',
+            body: formData
+        })
+          .then((response) => response.json())
+          .then((response) => {
+              console.log(response);
+              closeProductModal();
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+    });
+
   });
 </script>
 {% schema %}
