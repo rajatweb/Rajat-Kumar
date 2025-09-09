@@ -1,0 +1,233 @@
+<section class="ecom-product-grid">
+  <h1 class="ecom-product-grid-title">{{ section.settings.main_title }}</h1>
+  <div class="ecom-product-grid-wrapper">
+    {% for i in (1..6) %}
+      {% assign product_id = "product_" | append: i %}
+      {% assign posx_id = "position_x_" | append: i %}
+      {% assign posy_id = "position_y_" | append: i %}
+
+      {% assign product_handle = section.settings[product_id] %}
+      {% assign posx = section.settings[posx_id] | default: 50 %}
+      {% assign posy = section.settings[posy_id] | default: 50 %}
+
+
+      {% if product_handle != blank %}
+        {% assign product = all_products[product_handle] %}
+        <div class="ecom-product-grid-item">
+          <div class="ecom-product-grid-item-image">
+            <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}">
+            <button
+              class="hotspot-marker"
+              data-handle="{{ product.handle }}"
+              style="top: {{ posy }}%; left: {{ posx }}%;"
+            >
+              +
+            </button>
+          </div>
+
+        </div>
+
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  .ecom-product-grid {
+    padding: 15px 50px;
+    font-family: 'Jost'
+    , sans-serif;
+  }
+  .ecom-product-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+  }
+  .ecom-product-grid-item {
+    padding: 12px;
+  }
+
+  .ecom-product-grid-item-image {
+    position: relative;
+    text-align: center;
+  }
+
+  .ecom-product-grid-item-image img {
+    width: 100%;
+  }
+
+  .hotspot-marker {
+    position: absolute;
+    z-index: 10;
+    background: #F8F8F8E5;
+    border: 1px solid #F8F8F8E5;
+    color: #000;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const hotspotMarkers = document.querySelectorAll('.hotspot-marker');
+    hotspotMarkers.forEach(marker => {
+      marker.addEventListener('click', function() {
+        const handle = this.dataset.handle;
+        window.location.href = `/products/${handle}`;
+      });
+    });
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Ecom Product Grid",
+    "settings": [
+      {
+        "type": "text",
+        "id": "main_title",
+        "label": "Title"
+      },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "product",
+        "id": "product_1",
+        "label": "Select Product 1"
+      },
+      {
+        "type": "range",
+        "id": "position_x_1",
+        "label": "Position X 1",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_1",
+        "label": "Position Y 1",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_2",
+        "label": "Select Product 2"
+      }, {
+        "type": "range",
+        "id": "position_x_2",
+        "label": "Position X 2",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_2",
+        "label": "Position Y 2",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_3",
+        "label": "Select Product 3"
+      }, {
+        "type": "range",
+        "id": "position_x_3",
+        "label": "Position X 3",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_3",
+        "label": "Position Y 3",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_4",
+        "label": "Select Product 4"
+      }, {
+        "type": "range",
+        "id": "position_x_4",
+        "label": "Position X 4",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_4",
+        "label": "Position Y 4",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_5",
+        "label": "Select Product 5"
+      }, {
+        "type": "range",
+        "id": "position_x_5",
+        "label": "Position X 5",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_5",
+        "label": "Position Y 5",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_6",
+        "label": "Select Product 6"
+      }, {
+        "type": "range",
+        "id": "position_x_6",
+        "label": "Position X 6",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_6",
+        "label": "Position Y 6",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }
+    ],
+    "presets": [
+      {
+        "name": "Ecom Product Grid",
+        "category": "Ecom"
+      }
+    ]
+  }
+{% endschema %}
