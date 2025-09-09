@@ -1,0 +1,615 @@
+<section class="ecom-product-grid">
+  <h1 class="ecom-product-grid-title">{{ section.settings.main_title }}</h1>
+  <div class="ecom-product-grid-wrapper">
+    {% for i in (1..6) %}
+      {% assign product_id = "product_" | append: i %}
+      {% assign posx_id = "position_x_" | append: i %}
+      {% assign posy_id = "position_y_" | append: i %}
+
+      {% assign product_handle = section.settings[product_id] %}
+      {% assign posx = section.settings[posx_id] | default: 50 %}
+      {% assign posy = section.settings[posy_id] | default: 50 %}
+
+
+      {% if product_handle != blank %}
+        {% assign product = all_products[product_handle] %}
+        <div class="ecom-product-grid-item">
+          <div class="ecom-product-grid-item-image">
+            <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}">
+            <button
+              class="hotspot-marker"
+              data-handle="{{ product.handle }}"
+              data-product-id="{{ product.id }}"
+              data-product-title="{{ product.title | escape }}"
+              data-product-price="{{ product.price | money }}"
+              data-product-image="{{ product.featured_image | image_url: width: 400 }}"
+              data-product-description="{{ product.description | strip_html | truncate: 150 }}"
+              data-product-variants="{{ product.variants | json |  escape}}"
+              data-product-options="{{ product.options | json |  escape}}"
+              style="top: {{ posy }}%; left: {{ posx }}%;">
+              +
+            </button>
+          </div>
+
+        </div>
+
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Product Modal -->
+<div id="productModal" class="product-modal">
+  <div class="product-modal__content">
+    <a
+      href="javascript:void(0)"
+      id="productModalClose"
+      class="product-modal__close">&times;</a>
+
+    <div class="product-modal-body">
+      <div class="product-modal-body-image">
+        <img
+          id="productModalImage"
+          src=""
+          alt="">
+        <div class="basic-info">
+          <h1 id="productModalTitle" class="product-title"></h1>
+          <h3 id="productModalPrice" class="product-price"></h3>
+          <p id="productModalDescription" class="product-description"></p>
+        </div>
+
+
+      </div>
+      <form id="productForm" class="product-form">
+        <input
+          type="hidden"
+          name="id"
+          id="productId"
+          value="">
+
+        <div id="productOptions" class="product-options">
+          <!-- Product Options -->
+        </div>
+
+        <button type="submit" class="product-form-button">
+          Add to Cart
+          {% render "icon-arrow-right"
+            , color: "#fff" %}
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<style>
+
+  /** Product Modal **/
+  .product-modal {
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(77, 77, 77, 0.7);
+    transition: all 0.4s;
+  }
+
+  .product-modal.active {
+    visibility: visible;
+    opacity: 1;
+    z-index: 101;
+  }
+
+  .product-modal__content {
+    position: relative;
+    width: 420px;
+    max-width: 90%;
+    background: #fff;
+    padding: 1em;
+  }
+
+  .product-modal-body-image {
+    display: flex;
+    gap: 16px;
+  }
+
+  .product-modal-body-image img {
+    width: 50%;
+    object-fit: cover;
+  }
+
+  .product-modal-body-image .basic-info h1,
+  .product-modal-body-image .basic-info h3,
+  .product-modal-body-image .basic-info p {
+    font-family: 'Jost'
+    , sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  .product-modal-body-image .basic-info p {
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+  }
+
+  .product-modal__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #585858;
+    text-decoration: none;
+  }
+
+  /** Ecom Product Grid **/
+
+  .ecom-product-grid {
+    padding: 15px 50px;
+    font-family: 'Jost'
+    , sans-serif;
+  }
+  .ecom-product-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+  }
+  .ecom-product-grid-item {
+    padding: 12px;
+  }
+
+  .ecom-product-grid-item-image {
+    position: relative;
+    text-align: center;
+  }
+
+  .ecom-product-grid-item-image img {
+    width: 100%;
+  }
+
+  .hotspot-marker {
+    position: absolute;
+    z-index: 10;
+    background: #F8F8F8E5;
+    border: 1px solid #F8F8F8E5;
+    color: #000;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+  }
+
+
+  /** Product Options **/
+  .product-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .button-container {
+    display: flex;
+    border: 1px solid #000;
+  }
+
+  .button-container button {
+    width: 271px;
+    height: 40px;
+    border: none;
+  }
+
+  .button-container button.selected {
+    background-color: #000;
+    color: #fff;
+  }
+
+  .select-container {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #000;
+  }
+
+  .select-container select {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .product-form-button {
+    font-family: 'Jost'
+    , sans-serif;
+    text-transform: uppercase;
+    margin-top: 26px;
+    width: 100%;
+    height: 40px;
+    border: none;
+    background-color: #000;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .product-form-button svg {
+    color: #fff;
+    stroke: #fff;
+    fill: #fff;
+    transition: transform 0.3s ease;
+    margin-left: 40px;
+  }
+
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const productModal = document.getElementById('productModal');
+    const productModalClose = document.getElementById('productModalClose');
+    const hotspotMarkers = document.querySelectorAll('.hotspot-marker');
+
+
+    let currentProduct = null;
+    let selectedVariant = null;
+
+    hotspotMarkers.forEach(marker => {
+      marker.addEventListener('click', function() {
+        openProductModal(this);
+      });
+    });
+
+    productModalClose.addEventListener('click', function(e) {
+        e.preventDefault();
+      productModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    function openProductModal(marker) {
+        const productData = {
+            id: marker.dataset.productId,
+            title: marker.dataset.productTitle,
+            price: marker.dataset.productPrice,
+            image: marker.dataset.productImage,
+            description: marker.dataset.productDescription,
+            variants: JSON.parse(marker.dataset.productVariants),
+            options: JSON.parse(marker.dataset.productOptions),
+        }
+
+        console.log(productData);
+
+        currentProduct = productData;
+        selectedVariant = productData.variants[0];
+
+        document.getElementById('productModalImage').src = productData.image;
+        document.getElementById('productModalTitle').innerHTML = productData.title;
+        document.getElementById('productModalPrice').innerHTML = productData.price;
+        document.getElementById('productModalDescription').innerHTML = productData.description;
+
+        // generate option selector
+        generateOptionSelectors(productData.options, productData.variants);
+
+        productModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductModal() {
+        productModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+
+    function generateOptionSelectors(options, variants) {
+        const optionsContainer = document.getElementById('productOptions');
+        optionsContainer.innerHTML = '';
+
+        const orderedOptions = [...options].sort();
+
+        orderedOptions.forEach((option, index) => {
+            const optionGroup = document.createElement('div');
+            optionGroup.className = 'option-group';
+            const optionAutoIndex = index;
+
+            if (option.toLowerCase() === 'color') {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'button-container';
+                const colorFilters = [];
+
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                label.innerHTML = 'Color';
+                optionGroup.appendChild(label);
+
+                variants.forEach(variant => {
+                    const colorValue = variant[`option${options.indexOf(option) + 1}`];
+                    if (!colorFilters.includes(colorValue)) {
+                    colorFilters.push(colorValue);
+                    }
+                });
+
+                colorFilters.forEach((color, index) => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'color-button '+color;
+                    button.style.borderColor = color;
+                    button.style.borderLeftWidth = '2px';
+
+                    button.textContent = color;
+                    button.dataset.optionIndex = index;
+                    button.dataset.optionValue = color;
+
+                    if (color === variants[0].option2) {
+                        button.classList.add('selected');
+                    }
+
+                    button.addEventListener('click', function () {
+                        buttonContainer.querySelectorAll('.color-button').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        button.classList.add('selected');
+
+                        updateSelectedVariant();
+                    });
+
+                    buttonContainer.appendChild(button);
+                });
+
+                optionGroup.appendChild(buttonContainer);
+            } else if (option.toLowerCase() === 'size') {
+                const selectContainer = document.createElement('div');
+                selectContainer.className = 'select-container';
+                const sizeFilters = [];
+
+                const label = document.createElement('label');
+                label.className = 'option-label';
+                label.innerHTML = 'Size';
+                optionGroup.appendChild(label);
+
+                variants.forEach(variant => {
+                    const sizeValue = variant[`option${options.indexOf(option) + 1}`];
+                    if (!sizeFilters.includes(sizeValue)) {
+                    sizeFilters.push(sizeValue);
+                    }
+                });
+
+                const select = document.createElement('select');
+                select.name = 'size-select';
+                select.className = 'size-select';
+                select.dataset.optionIndex = optionAutoIndex;
+                
+                const placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.textContent = 'Choose Size';
+                select.appendChild(placeholderOption);
+
+                sizeFilters.forEach((size, index) => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = size;
+                    optionElement.textContent = size;
+                    optionElement.dataset.optionIndex = index;
+                    optionElement.dataset.optionValue = size;
+                    select.appendChild(optionElement);
+                });
+
+                select.addEventListener('change', function() {
+                    updateSelectedVariant();
+                });
+
+                selectContainer.appendChild(select);
+                optionGroup.appendChild(selectContainer);
+            }
+
+            optionsContainer.appendChild(optionGroup);
+        });
+    }
+
+    function updateSelectedVariant() {
+       const selectedOptions = [];
+
+       const sizeSelect = document.querySelector('.size-select');
+       if (sizeSelect && sizeSelect.value) {
+        selectedOptions[0] = sizeSelect.value;
+       }
+
+       const colorButton = document.querySelector('.color-button.selected');
+        if (colorButton) {
+            selectedOptions[1] = colorButton.dataset.optionValue;
+        }
+
+
+        const matchingVariant = currentProduct.variants.find(variant => {
+            return variant.options.every((option, index) => {
+                return selectedOptions[index] === option;
+            });
+        });
+
+        if (matchingVariant) {
+            selectedVariant = matchingVariant;
+
+            document.getElementById('productId').value = selectedVariant.id;
+
+            const formattedPrice = `$${(selectedVariant.price / 100).toFixed(2)}`;
+
+            document.getElementById('productModalPrice').innerHTML = formattedPrice;
+        }       
+    }
+
+    // Add to cart
+    productForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log("submit");
+
+        const formData = new FormData();
+        formData.append('id', selectedVariant.id);
+        formData.append('quantity', 1);
+
+        fetch('/cart/add.js', {
+            method: 'POST',
+            body: formData
+        })
+          .then((response) => response.json())
+          .then((response) => {
+              console.log(response);
+              closeProductModal();
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+    });
+
+  });
+</script>
+{% schema %}
+  {
+    "name": "Ecom Product Grid",
+    "settings": [
+      {
+        "type": "text",
+        "id": "main_title",
+        "label": "Title"
+      },
+      {
+        "type": "header",
+        "content": "Products"
+      },
+      {
+        "type": "product",
+        "id": "product_1",
+        "label": "Select Product 1"
+      },
+      {
+        "type": "range",
+        "id": "position_x_1",
+        "label": "Position X 1",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_1",
+        "label": "Position Y 1",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_2",
+        "label": "Select Product 2"
+      }, {
+        "type": "range",
+        "id": "position_x_2",
+        "label": "Position X 2",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_2",
+        "label": "Position Y 2",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_3",
+        "label": "Select Product 3"
+      }, {
+        "type": "range",
+        "id": "position_x_3",
+        "label": "Position X 3",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_3",
+        "label": "Position Y 3",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_4",
+        "label": "Select Product 4"
+      }, {
+        "type": "range",
+        "id": "position_x_4",
+        "label": "Position X 4",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_4",
+        "label": "Position Y 4",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_5",
+        "label": "Select Product 5"
+      }, {
+        "type": "range",
+        "id": "position_x_5",
+        "label": "Position X 5",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_5",
+        "label": "Position Y 5",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "product",
+        "id": "product_6",
+        "label": "Select Product 6"
+      }, {
+        "type": "range",
+        "id": "position_x_6",
+        "label": "Position X 6",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }, {
+        "type": "range",
+        "id": "position_y_6",
+        "label": "Position Y 6",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 50
+      }
+    ],
+    "presets": [
+      {
+        "name": "Ecom Product Grid",
+        "category": "Ecom"
+      }
+    ]
+  }
+{% endschema %}
