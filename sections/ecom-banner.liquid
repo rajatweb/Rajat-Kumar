@@ -9,14 +9,20 @@
     </div>
 
     <div class="ecom-header-logo">
-      <span class="brand-text">ecom</span>
+      <span class="brand-text">
+        {% if section.settings.logo != blank %}
+        <img src="{{ section.settings.logo | image_url }}" alt="Logo" >
+        {% else %}
+        <span>{{ shop.name }}</span>
+        {% endif %}
+      </span>
     </div>
     <div class="ecom-header-tagline desktop-only">
-      <span>tagline</span>
+      <span>{{ section.settings.tagline }}</span>
     </div>
     <div class="ecom-header-button desktop-only">
-      <a href="#" class="ecom-header-button-link">
-        Button
+      <a href="{{ section.settings.button_url }}" class="ecom-header-button-link">
+        {{ section.settings.button_text }}
         {% render 'icon-arrow-right'
           , color: '#000' %}
       </a>
@@ -33,12 +39,12 @@
 
 
   <!-- Main Content -->
-  <div class="ecom-content" style="background-image: url('{{ 'banner-image.svg' | asset_url }}');">
+  <div class="ecom-content" style="background-image: url('{{ section.settings.main_banner | image_url }}');">
     <div class="content-text desktop-only">
-      <h1 class="main-title">The Gift Guide</h1>
-      <p class="main-subtitle">Discover Joy: Your Ultimate Holiday Gift Destination.</p>
-      <a href="#" class="ecom-content-button">
-        Button
+      <h1 class="main-title">{{ section.settings.main_title }}</h1>
+      <p class="main-subtitle">{{ section.settings.main_subtitle }}</p>
+      <a href="{{ section.settings.main_button_url }}" class="ecom-content-button">
+        {{ section.settings.main_button_text }}
         {% render 'icon-arrow-right'
           , color: '#fff' %}
       </a>
@@ -50,6 +56,13 @@
             {% render 'icon-arrow-right'
               , color: '#fff' %}
         </a>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="ecom-footer">
+    <div class="ecom-footer-content">
+      <p>SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR</p>
     </div>
   </div>
 </section>
@@ -94,6 +107,7 @@
     font-weight: 700;
     letter-spacing: 1px;
     color: #000;
+    vertical-align: text-top;
   }
 
   .ecom-header-tagline {
@@ -119,15 +133,15 @@
     color: #000;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 1px;
     border-radius: 4px;
+    text-transform: uppercase;
     transition: all 0.3s ease-out;
   }
 
   .ecom-header-button-link svg {
-    width: 18px;
-    height: 18px;
+
     transition: all 0.3s ease;
     stroke: #000;
   }
@@ -135,6 +149,7 @@
   .ecom-header-button-link:hover {
     background-position: left bottom;
     color: #fff;
+    fill: #fff;
   }
 
   .ecom-header-button-link:hover svg {
@@ -160,7 +175,7 @@
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
-    padding: 100px 80px;
+    padding: 60px 80px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -183,9 +198,10 @@
     color: #fff;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 1px;
     border-radius: 4px;
+    text-transform: uppercase;
     transition: all 0.3s ease-out;
   }
 
@@ -231,7 +247,7 @@
     color: #fff;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 1px;
     border-radius: 4px;
     transition: all 0.3s ease-out;
@@ -244,6 +260,21 @@
     width: 100%;
     padding: 0 80px;
     transform: translateX(-50%);
+  }
+
+  .ecom-footer {
+    background-color: #f5f5f5;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+  }
+  .ecom-footer p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
 
@@ -283,7 +314,7 @@
     .mobile-content {
         padding: 0 20px;
     }
-
+  }
 
 </style>
 
@@ -291,11 +322,68 @@
   {
     "name": "Ecom Banner",
     "settings": [
-      {
-        "type": "text",
-        "id": "title",
-        "label": "Title"
-      }
+        {
+            "type": "header",
+            "content": "Header"
+        },
+        {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo"
+        },
+        {
+            "type": "text",
+            "id": "tagline",
+            "label": "Tagline"
+        },
+        {
+            "type": "text",
+            "id": "button_text",
+            "label": "Button Text"
+        },
+        {
+            "type": "url",
+            "id": "button_url",
+            "label": "Button URL"
+        },
+        {
+            "type": "header",
+            "content": "Main Banner & Text"
+        },
+        {
+            "type": "image_picker",
+            "id": "main_banner",
+            "label": "Main Banner"
+        },
+        {
+            "type": "text",
+            "id": "main_title",
+            "label": "Main Title"
+        },
+        {
+            "type": "text",
+            "id": "main_subtitle",
+            "label": "Main Subtitle"
+        },
+        {
+            "type": "url",
+            "id": "main_button_url",
+            "label": "Main Button URL"
+        },
+        {
+            "type": "text",
+            "id": "main_button_text",
+            "label": "Main Button Text"
+        },
+        {
+            "type": "header",
+            "content": "Footer"
+        },
+        {
+            "type": "text",
+            "id": "footer_text",
+            "label": "Footer Text"
+        }
     ],
     "presets": [
       {
