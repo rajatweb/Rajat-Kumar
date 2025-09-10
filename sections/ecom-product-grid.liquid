@@ -1,21 +1,41 @@
 <section class="ecom-product-grid">
   <h1 class="ecom-product-grid-title">{{ section.settings.main_title }}</h1>
   <div class="ecom-product-grid-wrapper">
+    {% comment %} 
+        Product Grid Items 
+            As we need to show 6 block with selected products 
+            we can use (for in loop) as products limit is known  
+    {% endcomment %}
+
     {% for i in (1..6) %}
+        {% comment %} 
+            Get product id, position x, position y from section settings as use i (index) to create indentifier
+        {% endcomment %}
       {% assign product_id = "product_" | append: i %}
       {% assign posx_id = "position_x_" | append: i %}
       {% assign posy_id = "position_y_" | append: i %}
 
-      {% assign product_handle = section.settings[product_id] %}
+    {% assign product_handle = section.settings[product_id] %}
+        {% comment %} 
+            default position is 50 is none selected
+        {% endcomment %}
       {% assign posx = section.settings[posx_id] | default: 50 %}
       {% assign posy = section.settings[posy_id] | default: 50 %}
 
 
       {% if product_handle != blank %}
+        {% comment %} 
+                Get product from all_products global variable frm shopify
+        {% endcomment %}
         {% assign product = all_products[product_handle] %}
+
         <div class="ecom-product-grid-item">
           <div class="ecom-product-grid-item-image">
             <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}">
+            {% comment %} 
+                Hotspot Marker
+                - with product dataset valiues so we can use later
+            {% endcomment %}
             <button
               class="hotspot-marker"
               data-handle="{{ product.handle }}"
@@ -38,7 +58,11 @@
   </div>
 </section>
 
-<!-- Product Modal -->
+{% comment %} 
+    Product Modal
+        - Modal with variant option 
+        - Add to cart with selected variant
+{% endcomment %}
 <div id="productModal" class="product-modal">
   <div class="product-modal__content">
     <a
@@ -57,8 +81,6 @@
           <h3 id="productModalPrice" class="product-price"></h3>
           <p id="productModalDescription" class="product-description"></p>
         </div>
-
-
       </div>
       <form id="productForm" class="product-form">
         <input
@@ -71,22 +93,21 @@
           <!-- Product Options -->
         </div>
 
-        <button type="submit" class="product-form-button">
-          Add to Cart
+        <button type="submit" class="product-form-button" id="productFormButton">
+          <span id="productFormButtonText"> Add to Cart</span>
           {% render "icon-arrow-right"
             , color: "#fff" %}
         </button>
-
       </form>
     </div>
-
   </div>
 </div>
 
 <style>
-
   /** Product Modal **/
   .product-modal {
+    font-family: 'Jost'
+    , sans-serif;
     visibility: hidden;
     opacity: 0;
     position: fixed;
@@ -128,39 +149,61 @@
   .product-modal-body-image .basic-info h1,
   .product-modal-body-image .basic-info h3,
   .product-modal-body-image .basic-info p {
-    font-family: 'Jost'
-    , sans-serif;
     font-size: 16px;
     font-weight: 300;
   }
 
-  .product-modal-body-image .basic-info p {
+  .product-modal-body-image .basic-info .product-title {
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  .product-modal-body-image .basic-info .product-price {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .product-modal-body-image .basic-info .product-description {
     font-size: 14px;
     font-weight: 300;
     letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 
   .product-modal__close {
     position: absolute;
-    top: 10px;
+    font-size: 20px;
+    top: -3px;
     right: 10px;
-    color: #585858;
+    color: #000;
     text-decoration: none;
   }
 
-  /** Ecom Product Grid **/
+  /** End Product Modal **/
+  
 
+  /** Ecom Product Grid **/
   .ecom-product-grid {
     padding: 15px 50px;
     font-family: 'Jost'
     , sans-serif;
   }
+
+  .ecom-product-grid-title {
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    padding: 0px 10px;
+    text-align: left;
+  }
+
   .ecom-product-grid-wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-
   }
+
   .ecom-product-grid-item {
     padding: 12px;
   }
@@ -191,8 +234,6 @@
     transform: translate(-50%, -50%);
   }
 
-
-  /** Product Options **/
   .product-options {
     display: flex;
     flex-direction: column;
@@ -212,6 +253,7 @@
   }
 
   .button-container button.selected {
+    background-position: left bottom;
     background-color: #000;
     color: #fff;
   }
@@ -227,6 +269,7 @@
     height: 100%;
     border: none;
   }
+
 
   .product-form-button {
     font-family: 'Jost'
@@ -247,24 +290,59 @@
     stroke: #fff;
     fill: #fff;
     transition: transform 0.3s ease;
-    margin-left: 40px;
+    margin-left: 14px;
   }
 
+  .product-form-button.disabled {
+    background-color: #ccc;
+    color: #000;
+    cursor: not-allowed;
+  }
+
+  /** Mobile media query **/
+
+  @media (max-width: 768px) {
+    .ecom-product-grid {
+      padding: 15px;
+    }
+    .ecom-product-grid-wrapper {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+    .ecom-product-grid-item {
+      padding: 2px;
+    }
+
+    .ecom-product-grid-title {
+        font-size: 24px;
+        text-align: center;
+    }
+  }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    /**
+      Product Modal
+      - Get Modal, Close and Hotspot marker
+    **/
     const productModal = document.getElementById('productModal');
     const productModalClose = document.getElementById('productModalClose');
     const hotspotMarkers = document.querySelectorAll('.hotspot-marker');
-
-
+    const productFormButton = document.getElementById('productFormButton');
+    /**
+      Current Product and Selected Variant
+      - Based on selection set currentProduct and selectedVariant
+      - Onclick on hostspot marker we will know which product is cliked and 
+      - retrieve all the data set values (using this pointer) to get all the data values
+    **/
     let currentProduct = null;
     let selectedVariant = null;
 
+
     hotspotMarkers.forEach(marker => {
       marker.addEventListener('click', function() {
-        openProductModal(this);
+        openProductModal(this); // this refer to current clicked button and it's element properties
       });
     });
 
@@ -274,6 +352,23 @@
       document.body.style.overflow = 'auto';
     });
 
+    /**
+      Close Product Modal
+      - Remove active class from product modal
+      - Restore body overflow
+    **/
+    function closeProductModal() {
+        productModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    /**
+      Open Product Modal
+      - Get product data from dataset values
+      - Set currentProduct and selectedVariant
+      - Set product modal image, title, price, description
+      - Generate option selectors
+    **/
     function openProductModal(marker) {
         const productData = {
             id: marker.dataset.productId,
@@ -285,7 +380,7 @@
             options: JSON.parse(marker.dataset.productOptions),
         }
 
-        console.log(productData);
+        console.log('product data', productData);
 
         currentProduct = productData;
         selectedVariant = productData.variants[0];
@@ -294,7 +389,7 @@
         document.getElementById('productModalTitle').innerHTML = productData.title;
         document.getElementById('productModalPrice').innerHTML = productData.price;
         document.getElementById('productModalDescription').innerHTML = productData.description;
-
+    
         // generate option selector
         generateOptionSelectors(productData.options, productData.variants);
 
@@ -302,24 +397,31 @@
         document.body.style.overflow = 'hidden';
     }
 
-    function closeProductModal() {
-        productModal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-
+    /**
+      Generate Option Selectors
+      - Generate option selectors for color and size
+      - Generate option selectors for color and size
+    **/
     function generateOptionSelectors(options, variants) {
         const optionsContainer = document.getElementById('productOptions');
         optionsContainer.innerHTML = '';
 
-        const orderedOptions = [...options].sort();
+        const orderedOptions = [...options].sort(); // sort options alphabetically
 
         orderedOptions.forEach((option, index) => {
             const optionGroup = document.createElement('div');
             optionGroup.className = 'option-group';
             const optionAutoIndex = index;
 
-            if (option.toLowerCase() === 'color') {
+
+            /**
+              Options element
+              - create element and label
+              - filter all unique values from option colorFilters and sizeFilters
+              - based on filterd value create buttons or select element
+            **/
+
+            if (option.toLowerCase() === 'color') { // if option is color
                 const buttonContainer = document.createElement('div');
                 buttonContainer.className = 'button-container';
                 const colorFilters = [];
@@ -340,14 +442,20 @@
                     const button = document.createElement('button');
                     button.type = 'button';
                     button.className = 'color-button '+color;
-                    button.style.borderColor = color;
-                    button.style.borderLeftWidth = '2px';
+                    // button.style.borderColor = color;
+                    // button.style.borderLeftWidth = '2px';
+                    button.style.borderLeft = '4px solid ' + color;
+                    button.style.background = 'linear-gradient(to right, #000 50%, #FFD700 50%);';
+                    button.style.backgroundSize = '200% 100%';
+                    button.style.backgroundPosition = 'right bottom';
+                    button.style.transition = 'all 0.3s ease-out';
 
                     button.textContent = color;
                     button.dataset.optionIndex = index;
                     button.dataset.optionValue = color;
 
                     if (color === variants[0].option2) {
+                        selectedVariant = variants[0]; // set selected variant to first variant
                         button.classList.add('selected');
                     }
 
@@ -364,7 +472,8 @@
                 });
 
                 optionGroup.appendChild(buttonContainer);
-            } else if (option.toLowerCase() === 'size') {
+
+            } else if (option.toLowerCase() === 'size') { // if option is size
                 const selectContainer = document.createElement('div');
                 selectContainer.className = 'select-container';
                 const sizeFilters = [];
@@ -386,9 +495,12 @@
                 select.className = 'size-select';
                 select.dataset.optionIndex = optionAutoIndex;
                 
+                
                 const placeholderOption = document.createElement('option');
                 placeholderOption.value = '';
-                placeholderOption.textContent = 'Choose Size';
+                placeholderOption.textContent = 'Choose your size';
+                placeholderOption.disabled = true;
+                placeholderOption.selected = true;
                 select.appendChild(placeholderOption);
 
                 sizeFilters.forEach((size, index) => {
@@ -412,6 +524,11 @@
         });
     }
 
+
+    /**
+      Update Selected Variant
+      - Update selected variant based on size and color
+    **/
     function updateSelectedVariant() {
        const selectedOptions = [];
 
@@ -443,27 +560,80 @@
         }       
     }
 
-    // Add to cart
-    productForm.addEventListener('submit', function(e) {
+    /**
+      Add to cart
+      - Add to cart based on selected variant
+    **/
+    productForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        console.log("submit");
+
+        if(!selectedVariant) {
+            alert('Please select a variant');
+            return;
+        }
+
+        if(document.getElementById('productId').value === '') {
+            alert('Please select a size');
+            return;
+        }
 
         const formData = new FormData();
         formData.append('id', selectedVariant.id);
         formData.append('quantity', 1);
 
-        fetch('/cart/add.js', {
-            method: 'POST',
-            body: formData
-        })
-          .then((response) => response.json())
-          .then((response) => {
-              console.log(response);
-              closeProductModal();
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        // fetch('/cart/add.js', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        //   .then((response) => response.json())
+        //   .then((response) => {
+        //       console.log(response);
+        //       closeProductModal();
+        //   })
+        //   .catch((error) => {
+        //     console.error(error);
+        //   });
+
+        try {
+            productFormButton.innerHTML = 'Adding to cart...';
+            productFormButton.classList.add('disabled');
+            productFormButton.disabled = true;
+            // Add item to cart
+            const addResponse = await fetch('/cart/add.js', {
+                method: 'POST',
+                body: formData
+            });
+            const addData = await addResponse.json();
+
+            // Get updated cart data
+            const cartResponse = await fetch('/cart.json');
+            const cartData = await cartResponse.json();
+
+            // Update cart count in header
+            const cartCountElement = document.getElementById('cart-icon-bubble');
+            const cartCountBubbleElement = cartCountElement.querySelector('.cart-count-bubble');
+
+            if (cartCountBubbleElement) {
+                const visibleCount = cartCountBubbleElement.querySelector('span[aria-hidden="true"]');
+                const hiddenCount = cartCountBubbleElement.querySelector('.visually-hidden');
+                console.log('visibleCount', visibleCount);
+                
+                visibleCount.textContent = cartData.item_count;
+                hiddenCount.textContent = `${cartData.item_count} item${cartData.item_count > 1 ? 's' : ''}`;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            closeProductModal();
+            productFormButton.innerHTML = 'Add to Cart';
+            productFormButton.classList.remove('disabled');
+            productFormButton.disabled = false;
+
+        } catch (error) {
+            console.error('Error:', error);
+            productFormButton.innerHTML = 'Add to Cart';
+            productFormButton.classList.remove('disabled');
+            productFormButton.disabled = false;
+        }
 
     });
 
@@ -495,7 +665,8 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_y_1",
         "label": "Position Y 1",
@@ -503,11 +674,13 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "product",
         "id": "product_2",
         "label": "Select Product 2"
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_x_2",
         "label": "Position X 2",
@@ -515,7 +688,8 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_y_2",
         "label": "Position Y 2",
@@ -523,11 +697,13 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "product",
         "id": "product_3",
         "label": "Select Product 3"
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_x_3",
         "label": "Position X 3",
@@ -535,7 +711,8 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_y_3",
         "label": "Position Y 3",
@@ -543,11 +720,13 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "product",
         "id": "product_4",
         "label": "Select Product 4"
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_x_4",
         "label": "Position X 4",
@@ -555,7 +734,8 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_y_4",
         "label": "Position Y 4",
@@ -563,11 +743,13 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "product",
         "id": "product_5",
         "label": "Select Product 5"
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_x_5",
         "label": "Position X 5",
@@ -575,7 +757,8 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      },
+      {
         "type": "range",
         "id": "position_y_5",
         "label": "Position Y 5",
@@ -583,11 +766,13 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "product",
         "id": "product_6",
         "label": "Select Product 6"
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_x_6",
         "label": "Position X 6",
@@ -595,7 +780,8 @@
         "max": 100,
         "step": 1,
         "default": 50
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "position_y_6",
         "label": "Position Y 6",

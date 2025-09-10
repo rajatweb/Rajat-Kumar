@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <!-- Mobile Content Section -->
+  <!-- Mobile Content Section - Only visible in mobile -->
   <div class="mobile-only">
     <div class="mobile-content">
       <h1 class="main-title">The Gift Guide</h1>
@@ -62,7 +62,7 @@
   <!-- Footer Section -->
   <div class="ecom-footer">
     <div class="ecom-footer-content">
-      <p>SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR</p>
+      <p>{{ section.settings.footer_text }}</p>
     </div>
   </div>
 </section>
@@ -160,7 +160,6 @@
   /** Mobile responsive and other css **/
   .mobile-only {
     display: none;
-    /* background-color: #fff; */
     text-align: center;
   }
 
@@ -274,7 +273,6 @@
 
 
   @media screen and (max-width: 768px) {
-
     .ecom-banner {
       height: 71vh;
     }
@@ -282,50 +280,38 @@
       min-height: calc(50vh - 100px);
       background-size: auto;
     }
-
     .mobile-banner-button {
       bottom: 30px;
     }
-
     .ecom-header {
       padding: 12px 20px;
       justify-content: space-between;
     }
-
     .desktop-only {
       display: none;
     }
-
     .mobile-menu-btn {
       display: flex;
       order: 1;
     }
-
     .ecom-header-logo {
       order: 2;
       flex: 1;
       text-align: center;
     }
-
     .mobile-only {
       display: block;
     }
-
     .main-title {
       font-size: 30px;
     }
-
     .main-subtitle {
       font-size: 16px;
     }
-
     .mobile-content {
       padding: 0 20px;
     }
-
-
   }
-
 </style>
 
 {% schema %}
@@ -350,37 +336,46 @@
         "type": "text",
         "id": "button_text",
         "label": "Button Text"
-      }, {
+      }, 
+      {
         "type": "url",
         "id": "button_url",
         "label": "Button URL"
-      }, {
+      }, 
+      {
         "type": "header",
         "content": "Main Banner & Text"
-      }, {
+      }, 
+      {
         "type": "image_picker",
         "id": "main_banner",
         "label": "Main Banner"
-      }, {
+      }, 
+      {
         "type": "text",
         "id": "main_title",
         "label": "Main Title"
-      }, {
+      }, 
+      {
         "type": "text",
         "id": "main_subtitle",
         "label": "Main Subtitle"
-      }, {
+      }, 
+      {
         "type": "url",
         "id": "main_button_url",
         "label": "Main Button URL"
-      }, {
+      }, 
+      {
         "type": "text",
         "id": "main_button_text",
         "label": "Main Button Text"
-      }, {
+      }, 
+      {
         "type": "header",
         "content": "Footer"
-      }, {
+      }, 
+      {
         "type": "text",
         "id": "footer_text",
         "label": "Footer Text"
